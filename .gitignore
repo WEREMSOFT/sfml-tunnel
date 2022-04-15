@@ -3,4 +3,3 @@
 *.cpp
 Makefile
 .vscode
-bin/main.bin

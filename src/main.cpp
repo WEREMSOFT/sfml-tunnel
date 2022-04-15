@@ -9,18 +9,20 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(CANVAS_WITH * CANVAS_SIZE_MULTIPLIER, CANVAS_HEIGHT * CANVAS_SIZE_MULTIPLIER), "Drawing Pixels!!");
 
-    sf::Image img;
+    sf::Image img, checkerI;
+    sf::Texture tx, checkerT;
+    sf::Sprite sp, checkerS;
 
-    img.create(320, 240, {255, 0, 0});
+    img.create(320, 240, {0, 0, 0});
 
-    createChecker(img, 10, {0xFF, 0, 0}, {0, 0, 0xFF});
+    checkerI.create(100, 100, {0, 0, 0});
 
-    sf::Texture tx;
-
+    createChecker(checkerI, 30, {0xFF, 0, 0}, {0, 0, 0xFF});
+    checkerT.loadFromImage(checkerI);
     tx.loadFromImage(img);
 
-    sf::Sprite sp;
     sp.setTexture(tx);
+    checkerS.setTexture(checkerT);
 
     sp.setScale(CANVAS_SIZE_MULTIPLIER, CANVAS_SIZE_MULTIPLIER);
 
@@ -39,12 +41,15 @@ int main()
         {
             window.close();
         }
-
-        drawCircle(img, {100, 100}, 30, {0, 0, 0});
+        for (int i = 1; i < 100; i++)
+        {
+            drawCircleTextured(img, checkerI, {100, 100}, i);
+        }
 
         tx.loadFromImage(img);
 
         window.draw(sp);
+        window.draw(checkerS);
         window.display();
     }
 

@@ -1,7 +1,7 @@
 SRC = $(shell find src -name *.cpp)
 OBJ = $(patsubst %.cpp,%.o,$(SRC))
 CC = g++
-FLAGS = -g -O0
+FLAGS = -g -O0 -Wall
 TARGET = bin/main.bin
 
 all: $(OBJ)

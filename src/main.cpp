@@ -8,25 +8,28 @@
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(CANVAS_WITH * CANVAS_SIZE_MULTIPLIER, CANVAS_HEIGHT * CANVAS_SIZE_MULTIPLIER), "Drawing Pixels!!");
+    sf::RenderTexture renderTexture;
 
-    sf::Image img, checkerI;
-    sf::Texture tx, checkerT;
-    sf::Sprite sp, checkerS;
+    renderTexture.create(320, 240);
+    renderTexture.clear({255, 0, 0});
 
-    img.create(320, 240, {0, 0, 0});
+    sf::CircleShape circle(30, 30);
 
-    checkerI.create(100, 100, {0, 0, 0});
+    circle.setPosition(160, 120);
 
-    createChecker(checkerI, 30, {0xFF, 0, 0}, {0, 0, 0xFF});
-    checkerT.loadFromImage(checkerI);
-    tx.loadFromImage(img);
+    renderTexture.draw(circle);
 
-    sp.setTexture(tx);
-    checkerS.setTexture(checkerT);
+    sf::Vertex triangle[] = {
+        sf::Vertex(sf::Vector2f(160, 0), sf::Color::Red),
+        sf::Vertex(sf::Vector2f(320, 240), sf::Color::Green),
+        sf::Vertex(sf::Vector2f(0, 240), sf::Color::Blue),
+    };
 
-    sp.setScale(CANVAS_SIZE_MULTIPLIER, CANVAS_SIZE_MULTIPLIER);
+    sf::Sprite sprite(renderTexture.getTexture());
 
-    int x, y;
+    renderTexture.draw(triangle, 3, sf::Triangles);
+
+    sprite.scale(3, 3);
 
     while (window.isOpen())
     {
@@ -41,15 +44,9 @@ int main()
         {
             window.close();
         }
-        for (int i = 1; i < 100; i++)
-        {
-            drawCircleTextured(img, checkerI, {100, 100}, i);
-        }
 
-        tx.loadFromImage(img);
+        window.draw(sprite);
 
-        window.draw(sp);
-        window.draw(checkerS);
         window.display();
     }
 

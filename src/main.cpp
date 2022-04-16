@@ -15,9 +15,9 @@ int main()
 
     img.create(320, 240, {0, 0, 0});
 
-    checkerI.create(20, 20, {0, 0, 0});
+    checkerI.create(256, 256, {0, 0, 0});
 
-    createChecker(checkerI, 10, {0xFF, 0, 0}, {0, 0, 0xFF});
+    createXorTexture(checkerI, 16, {0xFF, 0, 0}, {0, 0, 0xFF});
     checkerT.loadFromImage(checkerI);
     tx.loadFromImage(img);
 

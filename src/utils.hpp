@@ -19,12 +19,10 @@ void drawCircleTextured(sf::Image &image, const sf::Image texture, glm::vec2 cen
     int32_t endX = startX + diameter + 1;
     int32_t endY = startY + diameter + 1;
 
-    float perimeter = 2 * glm::pi<float>() * radius;
-
     int32_t y = radius % texture.getSize().y;
-    float xRatio = (float)texture.getSize().x / perimeter;
     int32_t x = 0;
-    float phase = 0;
+
+    static int pixelCount = 0;
 
     for (int i = startX; i < endX; i++)
     {
@@ -36,10 +34,10 @@ void drawCircleTextured(sf::Image &image, const sf::Image texture, glm::vec2 cen
 
             if (l == radius)
             {
-                x = glm::floor(phase * xRatio);
-                auto color = texture.getPixel(x, y);
+                auto color = texture.getPixel(pixelCount, y);
                 image.setPixel(i, j, color);
-                phase++;
+                pixelCount++;
+                pixelCount %= texture.getSize().x;
             }
         }
     }

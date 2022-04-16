@@ -15,9 +15,9 @@ int main()
 
     img.create(320, 240, {0, 0, 0});
 
-    checkerI.create(100, 100, {0, 0, 0});
+    checkerI.create(20, 20, {0, 0, 0});
 
-    createChecker(checkerI, 30, {0xFF, 0, 0}, {0, 0, 0xFF});
+    createChecker(checkerI, 10, {0xFF, 0, 0}, {0, 0, 0xFF});
     checkerT.loadFromImage(checkerI);
     tx.loadFromImage(img);
 
@@ -26,7 +26,7 @@ int main()
 
     sp.setScale(CANVAS_SIZE_MULTIPLIER, CANVAS_SIZE_MULTIPLIER);
 
-    int x, y;
+    int radius = 1;
 
     while (window.isOpen())
     {
@@ -41,10 +41,18 @@ int main()
         {
             window.close();
         }
-        for (int i = 1; i < 100; i++)
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
-            drawCircleTextured(img, checkerI, {100, 100}, i);
+            radius++;
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            radius--;
+        }
+        for (int i = 0; i < 100; i++)
+            drawCircleTextured(img, checkerI, {160, 120}, i);
 
         tx.loadFromImage(img);
 

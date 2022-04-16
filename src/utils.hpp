@@ -5,25 +5,51 @@
 #include <glm/vec2.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/gtx/vector_angle.hpp>
 #include <stdio.h>
 
 #define CANVAS_SIZE_MULTIPLIER 3
-#define CANVAS_WITH 320
+#define CANVAS_WIDTH 320
 #define CANVAS_HEIGHT 240
 
-void drawCircleTextured(sf::Image &image, const sf::Image texture, glm::vec2 center, int32_t radius)
+static glm::vec2 up(0, 1);
+
+uint32_t distanceTable[CANVAS_WIDTH][CANVAS_HEIGHT] = {0};
+uint32_t angleTable[CANVAS_WIDTH][CANVAS_HEIGHT] = {0};
+glm::vec2 screenCenter(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+
+void initTables(const sf::Image texture)
 {
     auto textureSize = texture.getSize();
-    glm::vec2 screenCenter(CANVAS_WITH / 2, CANVAS_HEIGHT / 2);
-
-    for (int i = 0; i < CANVAS_WITH; i++)
-        for (int j = 0; j < CANVAS_HEIGHT; j++)
+    for (int y = 0; y < CANVAS_HEIGHT; y++)
+        for (int x = 0; x < CANVAS_WIDTH; x++)
         {
-            glm::vec2 currentPoint((float)i, (float)j);
-            auto distance = glm::distance(currentPoint, screenCenter);
+            glm::vec2 currentPoint((float)x, (float)y);
+            distanceTable[x][y] = glm::distance(currentPoint, screenCenter);
+            angleTable[x][y] = glm::angle(glm::normalize(currentPoint - screenCenter), up) * textureSize.y;
+        }
+}
 
-            sf::Color colorToInsert = texture.getPixel((unsigned int)distance % textureSize.x, j % textureSize.y);
-            image.setPixel(i, j, colorToInsert);
+float distanceOffset = 0;
+float angleOffset = 0;
+void drawCircleTextured(sf::Image &image, const sf::Image texture, glm::vec2 center, float deltaTime)
+{
+    distanceOffset -= 50.f * deltaTime;
+    angleOffset += 10.0 * deltaTime;
+    auto textureSize = texture.getSize();
+
+    for (int y = 0; y < CANVAS_HEIGHT; y++)
+        for (int x = 0; x < CANVAS_WIDTH; x++)
+        {
+            auto distance = distanceTable[x][y] + distanceOffset;
+            auto angle = angleTable[x][y] + angleOffset;
+            sf::Color colorToInsert = texture.getPixel((uint32_t)distance % textureSize.x, (uint32_t)angle % textureSize.y);
+            auto colorAttenuation = distanceTable[x][y] == 0 ? 1 : distanceTable[x][y];
+            colorToInsert.r *= 255 - colorAttenuation;
+            colorToInsert.g *= 255 - colorAttenuation;
+            colorToInsert.b *= 255 - colorAttenuation;
+
+            image.setPixel(x, y, colorToInsert);
         }
 }
 

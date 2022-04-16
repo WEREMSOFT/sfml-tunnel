@@ -7,7 +7,7 @@
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(CANVAS_WITH * CANVAS_SIZE_MULTIPLIER, CANVAS_HEIGHT * CANVAS_SIZE_MULTIPLIER), "Drawing Pixels!!");
+    sf::RenderWindow window(sf::VideoMode(CANVAS_WIDTH * CANVAS_SIZE_MULTIPLIER, CANVAS_HEIGHT * CANVAS_SIZE_MULTIPLIER), "Drawing Pixels!!");
 
     sf::Image img, checkerI;
     sf::Texture tx, checkerT;
@@ -17,7 +17,7 @@ int main()
 
     checkerI.create(256, 256, {0, 0, 0});
 
-    createXorTexture(checkerI, 16, {0xFF, 0, 0}, {0, 0, 0xFF});
+    createChecker(checkerI, 16, {0xFF, 0, 0xFF}, {0, 0, 0xFF});
     checkerT.loadFromImage(checkerI);
     tx.loadFromImage(img);
 
@@ -28,8 +28,16 @@ int main()
 
     int radius = 1;
 
+    initTables(checkerI);
+
+    sf::Clock deltaClock;
+    auto prevDeltaTime = deltaClock.getElapsedTime();
+
     while (window.isOpen())
     {
+        auto currentTime = deltaClock.getElapsedTime();
+        auto deltaTime = (currentTime - prevDeltaTime);
+        prevDeltaTime = currentTime;
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -51,13 +59,13 @@ int main()
         {
             radius--;
         }
-        for (int i = 0; i < 100; i++)
-            drawCircleTextured(img, checkerI, {160, 120}, i);
+
+        drawCircleTextured(img, checkerI, {160, 120}, deltaTime.asSeconds());
 
         tx.loadFromImage(img);
 
         window.draw(sp);
-        window.draw(checkerS);
+        // window.draw(checkerS);
         window.display();
     }
 

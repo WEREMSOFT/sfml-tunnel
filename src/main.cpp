@@ -18,6 +18,7 @@ int main()
     checkerI.create(256, 256, {0, 0, 0});
 
     createChecker(checkerI, 16, {0xFF, 0, 0xFF}, {0, 0, 0xFF});
+    // createXorTexture(checkerI, 16, {0xFF, 0, 0xFF}, {0, 0, 0xFF});
     checkerT.loadFromImage(checkerI);
     tx.loadFromImage(img);
 
@@ -25,8 +26,6 @@ int main()
     checkerS.setTexture(checkerT);
 
     sp.setScale(CANVAS_SIZE_MULTIPLIER, CANVAS_SIZE_MULTIPLIER);
-
-    int radius = 1;
 
     initTables(checkerI);
 
@@ -48,16 +47,6 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
             window.close();
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            radius++;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            radius--;
         }
 
         drawCircleTextured(img, checkerI, {160, 120}, deltaTime.asSeconds());

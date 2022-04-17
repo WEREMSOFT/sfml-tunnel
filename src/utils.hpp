@@ -13,10 +13,23 @@
 #define CANVAS_HEIGHT 240
 
 static glm::vec2 up(0, 1);
+static glm::vec2 down(0, -1);
 
 uint32_t distanceTable[CANVAS_WIDTH][CANVAS_HEIGHT] = {0};
 uint32_t angleTable[CANVAS_WIDTH][CANVAS_HEIGHT] = {0};
 glm::vec2 screenCenter(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+
+float calculateClockwiseAngle(glm::vec2 v1, glm::vec2 v2)
+{
+    float clockwiseAngle = 0.0;
+
+    auto dot = glm::dot(v1, v2);
+    auto det = v1.x * v2.y - v1.y * v2.x;
+
+    clockwiseAngle = atan2(det, dot);
+
+    return clockwiseAngle;
+}
 
 void initTables(const sf::Image texture)
 {
@@ -26,16 +39,28 @@ void initTables(const sf::Image texture)
         {
             glm::vec2 currentPoint((float)x, (float)y);
             distanceTable[x][y] = glm::distance(currentPoint, screenCenter);
-            angleTable[x][y] = glm::angle(glm::normalize(currentPoint - screenCenter), up) * textureSize.y;
+            // angleTable[x][y] = calculateClockwiseAngle(currentPoint, screenCenter); // glm::angle(glm::normalize(currentPoint - screenCenter), up) * textureSize.y;
+            if (x < (CANVAS_WIDTH / 2.0))
+            {
+                angleTable[x][y] = glm::angle(glm::normalize(currentPoint - screenCenter), down) * textureSize.y;
+            }
+            else
+            {
+                angleTable[x][y] = glm::angle(glm::normalize(currentPoint - screenCenter), up) * textureSize.y;
+            }
         }
 }
 
 float distanceOffset = 0;
 float angleOffset = 0;
+float phase = 0;
+float phaseDistance = 0;
 void drawCircleTextured(sf::Image &image, const sf::Image texture, glm::vec2 center, float deltaTime)
 {
-    distanceOffset -= 50.f * deltaTime;
-    angleOffset += 10.0 * deltaTime;
+    phase += 0.001;
+    phaseDistance += 0.001;
+    distanceOffset -= glm::sin(phaseDistance) * 100.f * deltaTime;
+    angleOffset += glm::sin(phase) * 500.0 * deltaTime;
     auto textureSize = texture.getSize();
 
     for (int y = 0; y < CANVAS_HEIGHT; y++)
